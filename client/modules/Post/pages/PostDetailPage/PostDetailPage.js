@@ -7,12 +7,12 @@ import { injectIntl, FormattedMessage } from 'react-intl';
 import styles from '../../components/PostListItem/PostListItem.css';
 
 // Import Actions
-import { fetchPost, editPostRequest } from '../../PostActions';
+import { fetchPost, editPostRequest, voteUpRequest, voteDownRequest } from '../../PostActions';
+import { toggleEditPost } from '../../../App/AppActions';
 
 // Import Selectors
 import { getPost } from '../../PostReducer';
 import { getShowEditPost } from '../../../App/AppReducer';
-import { toggleEditPost } from '../../../App/AppActions';
 
 
 export class PostDetailPage extends Component {
@@ -22,7 +22,7 @@ export class PostDetailPage extends Component {
     this.state = {
       name: this.props.post.name,
       title: this.props.post.title,
-      content: this.props.post.content
+      content: this.props.post.content,
     };
   }
 
@@ -57,6 +57,11 @@ export class PostDetailPage extends Component {
         <h3 className={styles['post-title']}>{this.props.post.title}</h3>
         <p className={styles['author-name']}><FormattedMessage id="by" /> {this.props.post.name}</p>
         <p className={styles['post-desc']}>{this.props.post.content}</p>
+        <p>
+          <span className={styles['post-vote']} onClick={() => this.props.voteDownRequest(this.props.post.voteCount)}>-</span>
+          {this.props.post.voteCount}
+          <span className={styles['post-vote']} onClick={() => this.props.voteUpRequest(this.props.post.voteCount)}>+</span>
+        </p>
       </div>
     );
   };
@@ -92,7 +97,9 @@ function mapStateToProps(state, props) {
 function mapDispatchToProps(dispatch, props) {
   return {
     toggleEditPost: () => dispatch(toggleEditPost()),
-    editPostRequest: (post) => dispatch(editPostRequest(props.params.cuid, post))
+    editPostRequest: (post) => dispatch(editPostRequest(props.params.cuid, post)),
+    voteUpRequest: (votes) => dispatch(voteUpRequest(props.params.cuid, votes)),
+    voteDownRequest: (votes) => dispatch(voteDownRequest(props.params.cuid, votes)),
   };
 }
 
